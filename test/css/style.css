@@ -1,0 +1,139 @@
+body{
+	overflow-x: hidden;
+	font-family: "Hiragino Sans GB", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Micro Hei Mono", "WenQuanYi Zen Hei", "WenQuanYi Zen Hei", "Apple LiGothic Medium", "SimHei", "ST Heiti", "WenQuanYi Zen Hei Sharp";
+}
+::-webkit-scrollbar {
+  width: 13px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #777;/*#276677;*/
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;/*#3db4b2;*/
+}
+::-webkit-scrollbar-track-piece {
+  background-color: inherit;
+}
+::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
+::selection{background:rgba(255,255,0,0.3);color:#000}
+a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
+a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+h1,h2,h3,h4{
+	color: #000;
+}
+a,
+a:link,
+a:visited{
+	text-decoration: underline;
+	cursor: pointer;
+	color: #276677;
+}
+a:hover{
+	color: #9A0511;
+}
+ul { list-style-type:none; padding: 0;}
+ul li { margin:0; padding:0; }
+pre code{
+	overflow-x: auto;
+}
+.animation{
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+.pull-right{
+	float: right;
+}
+.nav{
+	z-index: 100;
+	position: fixed;
+	left: 10%;
+	top: 0;
+	height: 40px;
+	width: 80%;
+	margin: 0;
+	padding: 0;
+	line-height: 0;
+}
+.nav li{
+	display: inline-block;
+	float: left;
+	margin-right: 5px;
+	padding: 0 15px;
+	height: 100%;
+	background: #333;
+	color: #fff;
+	line-height: 40px;
+	text-align: center;
+	cursor: pointer;
+}
+.nav li:hover{
+	height: 45px;
+	line-height: 45px;
+}
+.nav .selected{	
+	height: 45px;
+	line-height: 45px;
+	background: #9A0511;
+}
+#aboutMe{
+	z-index: 200;
+	position: absolute;
+	right: 0;
+	top: 0;
+	line-height: 40px;
+}
+.container{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 200%;
+	height: 100%;
+}
+#catalog{
+	position: absolute;
+	left: 5%;
+	top: 70px;
+	width: 8%;
+	text-align: left;
+}
+#catalog li{
+	display: block;
+	line-height: 30px;
+}
+#catalog li a{
+	text-decoration: none;
+}
+#catalog .catalog-header{
+	width: 90%;
+	border-bottom: 1px solid #333;
+}
+#catalog li li{
+	padding-left: 10px;
+}
+.page{
+	float: left;
+	width: 50%;
+	height: 100%;
+	background: #fff;
+	overflow-x: hidden;
+}
+.content{
+	margin: 60px auto;
+	width: 80%;
+}
+.left-col{
+	float: left;
+	width: 20%;
+	min-height: 20px;
+}
+.right-col{
+	float: left;
+	width: 80%;
+	padding-bottom: 70px;
+}
+.demo-link{
+	position: relative;
+	top: -20px;
+}

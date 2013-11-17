@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>PRouter.js</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="css/googlecode.css">
+</head>
+<body>
+	<ul class="nav">
+		<li id="tab1" class="tab">PRouter.js</li>
+		<li id="tab2" class="tab">Download</li>
+		<a id="aboutMe" href="http://www.imsun.net" target="_blank">关于作者</a>
+	</ul>
+	<a href="https://github.com/imsun/PRouter.js"><img style="z-index: 50;position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+	<div id="container" class="container">
+		<ul id="catalog">
+			<li class="catalog-header">目录</li>
+			<li><a>PRouter.js</a></li>
+			<li><a>标记格式和函数绑定</a></li>
+			<li><a>函数列表</a></li>
+			<li>
+				<a>使用方法</a>
+				<ul>
+					<li> |-- <a>初始化</a></li>
+					<li> |-- <a>绑定函数</a></li>
+					<li> `-- <a>URL 操作</a></li>
+				</ul>
+			</li>
+			<li><a>其他解决方案</a></li>
+		</ul>
+		<div id="page1" class="page">
+			<div class="content">
+				<div class="left-col">
+				</div>
+				<div class="right-col">
+					<h1 id="title1">PRouter.js</h1>
+					<p>PRouter = pushState + router</p>
+					<p>PRouter 主要用于解决构建无刷新站点时页面标记的问题。</p>
+					<p>PRouter 使用 key=value 格式的键值对对页面进行标记，使 URL 包含页面状态。</p>
+					<p>PRouter 采用了 HTML5 history API（pushState），在载入、前进、后退、刷新等各种情况下都能够对标记进行解析，向用户展示正确页面。</p>
+
+					<h3 id="title2">标记格式和函数绑定</h3>
+					<p>PRouter 的 URL 标记由前缀和键值对组成，并以键值对变化作为事件驱动。</p>
+					<blockquote>
+						<p>PRouter 默认前缀为 "?"，每当 URL 中出现 "?" 时，PRouter.js 就会对 "?" 之后的部分进行解析。</p>
+						<p>在 URL 标记中，使用 key=value 的格式表示一个键值对；对于多个键值对，使用 "&" 进行连缀。</p>
+						<p>用户可以向任意 key 绑定函数，每当 key 的状态发生变化时都会调用绑定函数，并将 value 作为函数参数。</p>
+						<p>Eg. 在 "http://www.imsun.net/?s=1&=hello-world" 中，"?s=1&=hello-world2" 部分为 URL 标记，其中 "?" 为前缀，"s=1&=hello-world" 部分为键值对。</p>
+					</blockquote>
+
+					<h3 id="title3">函数列表</h3>
+					<pre>
+						<code>
+PRouter.start();                      // 启动 PRouter
+PRouter.setPrefix(prefix);            // 设置 URL 标记的前缀
+PRouter.bind(key, function(value){}); // 为 URL 标记中的 key 绑定函数
+PRouter.bindForTag(tagName);          // 为当前页面中的 tag 绑定点击事件
+PRouter.get(key);                     // 获得 URL 标记中 key 对应的 value
+PRouter.set(key, value);              // 设置 URL 标记中的 key 及其 value
+PRouter.remove(key);                  // 删除 URL 标记中的 key 及其 value
+PRouter.clear();                      // 清空 URL 标记
+						</code>
+					</pre>
+
+					<h3 id="title4">使用方法</h3>
+					<h4 id="title5">1. 初始化</h4>
+					<pre>
+						<code>
+&lt;script src="PRouter.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+PRouter.start();
+&lt;/script&gt;
+						</code>
+					</pre>
+					<h4 id="title6">2. 绑定函数</h4>
+					<pre>
+						<code>
+PRouter.bind(key, function(value){});
+ // 每当 URL 标记中的键值对状态发生变化时就会调用被绑定的函数，并将 value 作为参数。
+ // 注意，bind 不支持多重绑定，后绑定的函数会覆盖之前绑定的函数。
+PRouter.start();
+						</code>
+					</pre>
+					<h4 id="title7">3. URL 操作</h4>
+					<p>由于以 URL 变化作为事件驱动，因此 URL 操作会引起相关函数的调用。</p>
+					<p>你可以采用原始手段配合 PRouter.bindForTag 函数来操作 URL，例如：</p>
+					<pre>
+						<code>
+&lt;a href="?selected=tab1" url-opt="push" &gt;tab1&lt;/a&gt;
+&lt;a href="?selected=tab2" url-opt="push" &gt;tab2&lt;/a&gt;
+
+&lt;script src="PRouter.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+PRouter.bindForTag('a'); // 所有 url-opt 为 "push" 的 a 标签被点击时都不会发生跳转，同时 URL 将会变成 href 值
+&lt;/script&gt;
+						</code>
+					</pre>
+					<a id="demo2" class="demo-link">Demo</a>
+					<p>这样当点击链接时，URL 将变成对应的值，并调用 select() 函数。</p>
+					<p>同时，PRouter.js 提供了一系列 key-value 操作函数来对 URL 进行操作，包括：</p>
+					<pre>
+						<code>
+PRouter.get(key);        // 获得 URL 标记中 key 对应的 value
+PRouter.set(key, value); // 设置 URL 标记中的 key 及其 value
+PRouter.remove(key);     // 删除 URL 标记中的 key 及其 value
+PRouter.clear();         // 清空 URL 标记并移除所有绑定的函数
+						</code>
+					</pre>
+					<a id="demo3" class="demo-link">Demo</a>
+					<h3 id="title8">其他解决方案</h3>
+					<p>PRouter.js 使用 HTML5 pushState 和键值对对 URL 进行标记，但是由于 pushState 只在高级浏览器里支持，因此我们也可以使用 URL hash 对页面进行标记，具体介绍请<a href="http://www.imsun.net/?s=1&p=no-refresh-website_hash-and-router&" target="_blank">点击此处</a></p>
+					<p>想要了解搭建无刷新站点的更多内容可查看<a href="http://www.imsun.net/?tag=%E6%97%A0%E5%88%B7%E6%96%B0%E6%8A%80%E6%9C%AF&s=1&" target="_blank">作者的相关博客</a>。</p>
+				</div><!--right-col-->
+			</div><!--content-->
+		</div><!--page1-->
+
+		<div id="page2" class="page">
+			<div class="content">
+				<h1>Download</h1>
+				<p>点击此处下载 <a href="http://www.imsun.net/download/PRouter.js/PRouter.zip" target="_blank">PRouter.js</a></p>
+				<p>或者 <a href="https://github.com/imsun/PRouter.js" target="_blank">Fork me on GitHub</a></p>
+			</div>
+		</div>
+	</div><!--container-->
+
+<script src="prouter.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/highlight.pack.js"></script>
+<script src="js/main.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
