@@ -10,7 +10,6 @@
 	PRouter.lastQuery = {}
 
 	# Start PRouter
-
 	PRouter.start = ->
 		# Use `setTimeout` to avoid duplicate routing in webkit.
 		setTimeout(() ->
@@ -19,7 +18,6 @@
 			, false)
 		, 0)
 		PRouter._checkURL()
-
 
 	# Add a route and call callbacks when event happens.
 	# @param  {String}   route    A route like '/test/:num'.
@@ -48,7 +46,7 @@
 	PRouter.bindForTag = (tagName) ->
 		tag = tagName or 'a'
 		items = document.getElementsByTagName tag
-		for i in [0..items.length]
+		for i in [0..items.length - 1]
 			hrefOpt = items[i].getAttribute 'href-opt'
 			if hrefOpt
 				items[i].onclick = ->
@@ -66,6 +64,17 @@
 		root.history.pushState(config, document.title, url)
 		PRouter._checkURL() if checkURL
 
+	# Use `pushState` to change current URL.
+	# @param  {String} url    Target URL.
+	# @param  {Boolean} checkURL Optional. Determin whether check URL after changing it. Default true.
+	PRouter.replace = (url, checkURL) ->
+		config =
+			back: location.href
+		checkURL = checkURL or true
+
+		root.history.replaceState(config, document.title, url)
+		PRouter._checkURL() if checkURL
+
 	# Check current URL and route.
 	# @param  {String} url Optional. Default location.pathname.
 	PRouter._checkURL = (url) ->
@@ -73,12 +82,12 @@
 		regexp = new RegExp
 
 		# Check location.pathname and route it.
-		for pattern in rules
+		for pattern of rules
 			regexp.compile pattern
 			args = url.match regexp
 			if args
-				for i in [0..rules[pattern].length]
-					if PRouter._checkPathEvent(rules[patter][i].event,
+				for i in [0..rules[pattern].length - 1]
+					if PRouter._checkPathEvent(rules[pattern][i].event,
 							key: pattern
 							value: args.toString()
 						)
@@ -89,10 +98,10 @@
 				break
 
 		# Check location.search and route it.
-		query = PRouter.splitQuery()
-		for key in query
-			if typeof(PRouter.queryRules[key] isnt 'undefined')
-				for i in [0..PRouter.queryRules[key].length]
+		query = PRouter._splitQuery()
+		for key of query
+			if typeof(PRouter.queryRules[key]) isnt 'undefined'
+				for i in [0..PRouter.queryRules[key].length - 1]
 					if PRouter._checkQueryEvent(PRouter.queryRules[key][i].event, query)
 						PRouter.queryRules[key][i].fn.apply(this, [query[key]])
 		PRouter.lastQuery = query
@@ -109,7 +118,8 @@
 		pattern = route.replace(escapeRegExp, '\\$&')
 			.replace(optionalParam, '(?:$1)?')
 			.replace(namedParam, (match, optional) ->
-				return optional ? match : '([^\/]+)';
+				return match if optional 
+				return '([^\/]+)'
 			)
 			.replace(splatParam, '(.*?)');
 
@@ -131,7 +141,7 @@
 	# @param  {Object} currentQuery The query to exact.
 	# @return {Bollean}             Return true when event happened otherwise false.
 	PRouter._checkQueryEvent = (event, currentQuery) ->
-		for key in currentQuery
+		for key of currentQuery
 			switch event
 				when 'show' then return true
 				else
@@ -146,7 +156,7 @@
 		queryStrArray = queryStr.split '&'
 		queryObj = {}
 
-		for i in [0..queryStrArray.length]
+		for i in [0..queryStrArray.length - 1]
 			queryObj[queryStrArray[i].split('=')[0]] = queryStrArray[i].split('=')[1]
 
 		return queryObj

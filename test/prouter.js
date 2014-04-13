@@ -43,7 +43,7 @@
     tag = tagName || 'a';
     items = document.getElementsByTagName(tag);
     _results = [];
-    for (i = _i = 0, _ref = items.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       hrefOpt = items[i].getAttribute('href-opt');
       if (hrefOpt) {
         _results.push(items[i].onclick = function() {
@@ -67,17 +67,27 @@
       return PRouter._checkURL();
     }
   };
+  PRouter.replace = function(url, checkURL) {
+    var config;
+    config = {
+      back: location.href
+    };
+    checkURL = checkURL || true;
+    root.history.replaceState(config, document.title, url);
+    if (checkURL) {
+      return PRouter._checkURL();
+    }
+  };
   PRouter._checkURL = function(url) {
-    var args, i, key, pattern, query, regexp, _i, _j, _k, _l, _len, _len1, _ref, _ref1;
+    var args, i, key, pattern, query, regexp, _i, _j, _ref, _ref1;
     url = url || location.pathname || '';
     regexp = new RegExp;
-    for (_i = 0, _len = rules.length; _i < _len; _i++) {
-      pattern = rules[_i];
+    for (pattern in rules) {
       regexp.compile(pattern);
       args = url.match(regexp);
       if (args) {
-        for (i = _j = 0, _ref = rules[pattern].length; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
-          if (PRouter._checkPathEvent(rules[patter][i].event, {
+        for (i = _i = 0, _ref = rules[pattern].length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          if (PRouter._checkPathEvent(rules[pattern][i].event, {
             key: pattern,
             value: args.toString()
           })) {
@@ -91,11 +101,10 @@
         break;
       }
     }
-    query = PRouter.splitQuery();
-    for (_k = 0, _len1 = query.length; _k < _len1; _k++) {
-      key = query[_k];
-      if (typeof (PRouter.queryRules[key] !== 'undefined')) {
-        for (i = _l = 0, _ref1 = PRouter.queryRules[key].length; 0 <= _ref1 ? _l <= _ref1 : _l >= _ref1; i = 0 <= _ref1 ? ++_l : --_l) {
+    query = PRouter._splitQuery();
+    for (key in query) {
+      if (typeof PRouter.queryRules[key] !== 'undefined') {
+        for (i = _j = 0, _ref1 = PRouter.queryRules[key].length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
           if (PRouter._checkQueryEvent(PRouter.queryRules[key][i].event, query)) {
             PRouter.queryRules[key][i].fn.apply(this, [query[key]]);
           }
@@ -111,9 +120,10 @@
     splatParam = /\*\w+/g;
     escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g;
     pattern = route.replace(escapeRegExp, '\\$&').replace(optionalParam, '(?:$1)?').replace(namedParam, function(match, optional) {
-      return optional != null ? optional : {
-        match: '([^\/]+)'
-      };
+      if (optional) {
+        return match;
+      }
+      return '([^\/]+)';
     }).replace(splatParam, '(.*?)');
     return '^' + pattern + '$';
   };
@@ -129,9 +139,8 @@
     }
   };
   PRouter._checkQueryEvent = function(event, currentQuery) {
-    var key, _i, _len;
-    for (_i = 0, _len = currentQuery.length; _i < _len; _i++) {
-      key = currentQuery[_i];
+    var key;
+    for (key in currentQuery) {
       switch (event) {
         case 'show':
           return true;
@@ -148,7 +157,7 @@
     queryStr = query || location.search.substr(1);
     queryStrArray = queryStr.split('&');
     queryObj = {};
-    for (i = _i = 0, _ref = queryStrArray.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = _i = 0, _ref = queryStrArray.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       queryObj[queryStrArray[i].split('=')[0]] = queryStrArray[i].split('=')[1];
     }
     return queryObj;
