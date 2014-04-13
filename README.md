@@ -5,25 +5,19 @@ PRouter.js
 
 查看中文文档请[点击此处][imsun]
 
-My English is poor, and I expect someone can help me correct this document.
-
 [imsun]: http://www.imsun.net/project/PRouter.js/
 
 ##Overview
 
 ###PRouter = pushState + router
 
-PRouter is a URL router written in native javascript. It will mark current URL with key-value pairs and add event listener to each KVP's changing. Once KVP changes, listener will be called with the value being parameter.
+PRouter is a URL router written in native javascript. You can add a route to either a URL path or a query.
 
-PRouter also offers a group of functions to operate URL. When we operate current URL, the browser won't attempt to load it with HTML5 history API (pushState).
+PRouter also offers ways to operate URL. When we change current URL, the browser won't attempt to load it with HTML5 history API (pushState).
 
 ##Usage
 
-URL mark consists of two parts: prefix and KVPs.
-
-For example, in `http://www.imsun.net/?s=1&p=hello-world`, "?s=1&p=hello-world" is the URL mark, where "?"(you can define it as you like) is prefix and "s=1&p=hello-world" is KVPs.
-
-Consider the following page, suppose the URL for it is "http://www.imsun.net/".
+Consider the following page, suppose the host is "www.imsun.net/".
 
 ``` html
 <!DOCTYPE html>
@@ -31,86 +25,91 @@ Consider the following page, suppose the URL for it is "http://www.imsun.net/".
 <head>
 </head>
 <body>
-	<p><a href="?tab=you_select_tab1" url-opt="push">tab1</a></p>
-	<p><a href="?tab=you_select_tab2" url-opt="push">tab2</a></p>
+	<button id="button1" onclick="PRouter.push('/demo/1-1')">demo 1-1</button>
+	<button id="button2" onclick="PRouter.push('/demo/1-2')">demo 1-2</button>
 	<div id="container">
 	</div>
-<script src="prouter.js"></script>
-<script>
-PRouter.bind('tab', function(value){ // function will be called when KVP changes
-	document.getElementById('container').innerHTML = value;
-});
-PRouter.start(); // start PRouter
-PRouter.bindForTag('a');
-</script>
+	<script src="prouter.js"></script>
+	<script>
+	// function will be called when "/demo/:num" appears in URL or `num` changes, with `num` being param.
+	PRouter.route('/demo/:num', function(num){
+		document.getElementById('container').innerHTML = 'This is demo ' + num;
+	});
+
+	// start PRouter.
+	PRouter.start();
+	</script>
 </body>
 </html>
 ```
-When we click tab1, current URL will become "http://www.imsun.net/?tab=1". But the browser won't attempt to load it, and the inner HTML of container will become "you_select_tab1". `PRouter.bindForTag` will change current URL when we click links whose name is 'a' and `url-opt` is 'push', `PRouter.bind` will bind a function to key 'tab' and `PRouter.start` will add event listener to URL changing and call the function bound to the key with the value being parameter.
+When we click `button1`, current URL will become "http://www.imsun.net/demo/1-1" but browser won't really load it, and the inner HTML of `container` will become "This is demo 1-1". 
+
+Futher, sometimes we may want a easy access to change URL without refresh, then you can do like this.
+
+``` html
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+	<a href="/demo/2-1" href-opt="push">demo 2-1</a>
+	<a href="/demo/2-2" href-opt="push">demo 2-2</a>
+	<div id="container">
+	</div>
+	<script src="prouter.js"></script>
+	<script>
+	// function will be called when "/demo/:num" appear in URL or `num` changes, with `num` being param.
+	PRouter.route('/demo/:num', function(num){
+		document.getElementById('container').innerHTML = 'This is demo ' + num;
+	});
+
+	// bind click-event listeners to all `a` elements with `href-opt`.
+	PRouter.bindForTag();
+
+	// start PRouter.
+	PRouter.start();
+	</script>
+</body>
+</html>
+```
+This is a more friendly way to users and search engines. `PRouter.bindForTag()` will bind click-event listeners to all `a` elements with `href-opt`(will override previous listener). When it is clicked, PRouter will change current URL according to its href using `history.pushState()`.
 
 ##Methods
 
 ###`PRouter.start()`
 
-It will start the router by add event listener to URL's changing and analyse current URL. Be sure that it is put after `PRouter.bind`.
+It will start the router by add a listener to `popState`. Be sure it is put after `PRouter.route()` or `PRouter.queryRoute`.
 
-###`PRouter.bind(key, listener)`
+###`PRouter.route(route, callback, event)`
 
-- **key** _\[string\]_: Necessary. The key you want to watch. Once it appears in URL mark or the value for it changes, the listener will be called with the value being parameter.
+- **route** _\[String\]_: a route such like '/demo' or '/demo/:num' or '/demo/p:num'.
 
-- **listener** _\[function\]_: Necessary. Refer words above. You can define it like `function(value){ /*some code...*/ }`.
+- **callback** _\[Function\]_: It will be called when current URL match the route.
 
-It will  bind the function to key. Once the key appears in URL mark or the value for it changes, the function will be called with the value being parameter.
+- **event** _\[String, optional\]_: Determin when the callback will be called. Default 'change'(when route matched first time or param in route changes), 'show'(everytime when route matched) is also avalible.
+
+###`PRouter.queryRoute(key, callback, event)`
+
+- **key** _\[String\]_: a key that may appears in URL query.
+
+- **callback** _\[Function\]_: It will be called when the key appears in current URL or or value for it changes.
+
+- **event** _\[String, optional\]_: Determin when the callback will be called. Default 'change'(when the key appears first time or value for it changes), 'show'(everytime when key is in URL) is also avalible.
 
 ###`PRouter.bindForTag(tagName)`
 
-- **tagName** _\[string\]_: NOT necessary. The target elements' tag name. Default tag is "a".
+- **tagName** _\[String, optional\]_: Tag name for target elements. Default "a".
 
-For a simpler usage of PRouter, you can run this function after elements being loaded. It will add listener to click event to elements whose tag is `tagName` and `url-opt` is "push", "replace" or "go", sunch as `<a href="?tab=1" url-opt="push"></a>`.
+For a simpler usage of PRouter, you can run this function after elements being loaded. It will add a click-event listener to elements whose tag name is `tagName` and has `href-opt`(can be "push" or "replace"), such as `<a href="/demo" href-opt="push">demo</a>`.
 
-Suppose the element were clicked, case "push", current URL will become its href and it will be pushed into browser's history; case "replace", current URL will become its href and it will replace former URL in browser's history; case "go", the browser will load its href, just like there is no `url-opt`.
+###`PRouter.push(url, checkURL)`
 
-###`PRouter.setPrefix(prefix)`
+- **url** _\[String\]_: Target URL.
 
-- **prefix** _\[string\]_: Necessary. URL mark's prefix that you want to change to.
+- **checkURL** _\[Boolean\]_: Optional. Determin whether check URL after changing it. Default true.
 
-URL mark's default prefix is "?". It means that if there exist the prefix in URL and PRouter has started, PRouter will regard string after prefix (except URL hash) as URL mark. You can define it with this function as you like.
+###`PRouter.replace(url, checkURL)`
 
-###KVP Operate Functions
+- **url** _\[String\]_: Target URL.
 
-Considering we use KVP in URL mark, PRouter offers a group of functions to operate KVPs.
-
-####`PRouter.get(key)`
-
-- **key** _\[string\]_: Necessary. Key for the value you want to get.
-
-It will return key's value in URL mark.
-
-####`PRouter.set(key, value, opt)` or `PRouter.set(KVPs, opt)`
-
-- **key** _\[string\]_: Necessary. The key you want to set.
-
-- **value** _\[string\]_: Necessary. The value you wang to set.
-
-- **KVPs** _\[object\]_: Necessary. Several KVPs to change, such as `{"tab":"1", "p":"hello"}`.
-
-- **opt** _\[string\]_: NOT necessary. The option you want to take when change URL mark and the defailt option is "push". Case "push", PRouter will generate a target URL and it will be pushed into browser's history; case "replace", PRouter will generate a target URL and it will replace former URL in browser's history; case "go", PRouter will generate a target URL and the browser will load it; case "ignore", the target URL won't be generated
-until next KVP operate function works.
-
-It will change the value for the key in URL mark. If there is no such key, it will add a new KVP in URL mark.
-
-You can also use it as `PRouter.set({object}, opt)` to change several KVPs in one time.
-
-####`PRouter.remove(key, opt)` or `PRouter.remove(KVPs, opt)`
-
-- **key** _\[string\]_: Necessary. The key you want to remove.
-
-- **KVPs** _\[object\]_: Necessary. Several KVPs you want to remove, such as `{"tab":"1", "p":"hello"}`.
-
-- **opt** _\[string\]_: NOT necessary. Refer `PRouter.set`.
-
-It will remove target KVP in URL mark.
-
-####`PRouter.clear()`
-
-It will clear URL mark.
+- **checkURL** _\[Boolean\]_: Optional. Determin whether check URL after changing it. Default true.

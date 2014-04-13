@@ -21,6 +21,9 @@ a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
 h1,h2,h3,h4{
 	color: #000;
 }
+h4{
+	font-weight: bold;
+}
 a,
 a:link,
 a:visited{
@@ -31,8 +34,6 @@ a:visited{
 a:hover{
 	color: #9A0511;
 }
-ul { list-style-type:none; padding: 0;}
-ul li { margin:0; padding:0; }
 pre code{
 	overflow-x: auto;
 }
@@ -97,8 +98,12 @@ pre code{
 	top: 70px;
 	width: 8%;
 	text-align: left;
+	list-style-type:none;
+	padding: 0;
 }
 #catalog li{
+	margin:0;
+	padding:0; 
 	display: block;
 	line-height: 30px;
 }
@@ -135,5 +140,5 @@ pre code{
 }
 .demo-link{
 	position: relative;
-	top: -20px;
+	/*top: -20px;*/
 }

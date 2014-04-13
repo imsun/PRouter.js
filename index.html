@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>demo</title>
+</head>
+<body>
+    <button id="button1" onclick="PRouter.push('/demo/1-1')">demo 1-1</button>
+    <button id="button2" onclick="PRouter.push('/demo/1-2')">demo 1-2</button>
+    <div id="container">
+    </div>
+    <script src="rb.js"></script>
+    <script>
+    // function will be called when "/demo/:num" appear in URL or `num` changes, with `num` being param.
+    PRouter.route('/demo/:num', function(num){
+        document.getElementById('container').innerHTML = 'This is demo ' + num;
+    });
+
+    // start PRouter.
+    PRouter.start();
+    </script>
+</body>
+</html>

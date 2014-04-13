@@ -1,14 +1,14 @@
 $(document).ready(function(){
 	select(1);
-	PRouter.bind('s', function(value){
-		select(value);
+	PRouter.route('/tab/:num', function(num){
+		select(num);
 	});
-	PRouter.bind('loc', function(value){
+	PRouter.queryRoute('loc', function(value){
 		scrollTo(value);
 	});
 	PRouter.start();
 	$('.tab').click(function(){
-		PRouter.set('s', this.id.substring(3));
+		PRouter.push('/tab/' + this.id.substring(3));
 	});
 	catalogInit();
 });
@@ -60,7 +60,7 @@ function catalogInit(catalogId){
 				count++;
 				nodes[i].childNodes[j].tgt = count;
 				nodes[i].childNodes[j].addEventListener('click', function(){
-					PRouter.set('loc', 'title' + this.tgt);
+					PRouter.push('?loc=' + 'title' + this.tgt);
 				});
 				break;
 			};
@@ -75,6 +75,7 @@ function runDemmo(demoCode){
 	<head>\
 	<title>Demo</title>\
 	<meta charset="utf-8" />\
+	<link rel="stylesheet" href="css/googlecode.css">\
 	<style>\
 	body{background:#333}\
 	a,a:link,a:visited{text-decoration: underline;cursor: pointer;color: #276677;}\
@@ -94,24 +95,53 @@ function runDemmo(demoCode){
 	var openWindow = window.open();
 	openWindow.document.write(inner);
 }
-$('#demo2').click(function(){
+$('#demo1').click(function(){
 	var code = '\
-<p onclick="alert(\'Current URL is: \' + location)"><a href="?msg=test1" url-opt="push">test1</a></p>\n\n\
-<p onclick="alert(\'Current URL is: \' + location)"><a href="?msg=test2" url-opt="push">test2</a></p>\n\n\
-\n\n\
-<script src="prouter.js"></script>\n\n\
-<script>\n\n\
-PRouter.bindForTag("a");\n\n\
-</script>';
+<!DOCTYPE html>\n\
+<html>\n\
+<head>\n\
+</head>\n\
+<body>\n\
+	<button id="button1" onclick="PRouter.push(\'/demo/1-1\')">demo 1-1</button>\n\
+	<button id="button2" onclick="PRouter.push(\'/demo/1-2\')">demo 1-2</button>\n\
+	<div id="container"></div>\n\
+	<script src="prouter.js"></script>\n\
+	<script>\n\
+	// 当 "/demo/:num" 出现在 URL 中或 `num` 的值改变时回调函数就会被执行, 同时 `num` 将作为函数参数.\n\
+	PRouter.route(\'/demo/:num\', function(num){\n\
+		document.getElementById(\'container\').innerHTML = \'This is demo \' + num;\n\
+	});\n\
+\n\
+	// 启动 PRouter.\n\
+	PRouter.start();\n\
+	</script>\n\
+</body>\n\
+</html>';
 	runDemmo(code);
 });
-$('#demo3').click(function(){
+$('#demo2').click(function(){
 	var code = '\
-<a onclick="PRouter.set(\'msg\', \'set\')">PRouter.set()</a><br>\n\n\
-<a onclick="alert(\'The value of msg is: \' + PRouter.get(\'msg\'))">PRouter.get()</a><br>\n\n\
-<a onclick="PRouter.remove(\'msg\');">PRouter.remove()</a><br>\n\n\
-<a onclick="PRouter.clear();">PRouter.clear()</a>\n\n\
-\n\n\
-<script src="prouter.js"></script>';
+<!DOCTYPE html>\n\
+<html>\n\
+</head>\n\
+<body>\n\
+	<a href="/demo/2-1" href-opt="push">demo 2-1</a>\n\
+	<a href="/demo/2-2" href-opt="push">demo 2-2</a>\n\
+	<div id="container"></div>\n\
+	<script src="prouter.js"></script>\n\
+	<script>\n\
+	// 当 "/demo/:num" 出现在 URL 中或 `num` 的值改变时回调函数就会被执行, 同时 `num` 将作为函数参数.\n\
+	PRouter.route(\'/demo/:num\', function(num){\n\
+		document.getElementById(\'container\').innerHTML = \'This is demo \' + num;\n\
+	});\n\
+	\n\
+	// 向所有有 `href-opt` 属性的 `a` 元素绑定点击事件.\n\
+	PRouter.bindForTag();\n\
+	\n\
+	// 启动 PRouter.\n\
+	PRouter.start();\n\
+	</script>\n\
+</body>\n\
+</html>';
 	runDemmo(code);
 });
