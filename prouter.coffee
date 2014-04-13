@@ -49,9 +49,9 @@
 		for i in [0..items.length - 1]
 			hrefOpt = items[i].getAttribute 'href-opt'
 			if hrefOpt
-				items[i].onclick = ->
-					PRouter[hrefOpt] this.href
-					return false
+				items[i].onclick = (event) ->
+					PRouter[this.getAttribute 'href-opt'] this.href
+					event.preventDefault();
 
 	# Use `pushState` to change current URL.
 	# @param  {String} url    Target URL.

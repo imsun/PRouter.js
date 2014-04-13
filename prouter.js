@@ -46,9 +46,9 @@
     for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       hrefOpt = items[i].getAttribute('href-opt');
       if (hrefOpt) {
-        _results.push(items[i].onclick = function() {
-          PRouter[hrefOpt](this.href);
-          return false;
+        _results.push(items[i].onclick = function(event) {
+          PRouter[this.getAttribute('href-opt')](this.href);
+          return event.preventDefault();
         });
       } else {
         _results.push(void 0);
