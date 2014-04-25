@@ -1,22 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-	<title>demo</title>
+	<meta charset="utf-8">
+	<title>PRouter.js</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="css/googlecode.css">
 </head>
 <body>
-    <button id="button1" onclick="PRouter.push('/demo/1-1')">demo 1-1</button>
-    <button id="button2" onclick="PRouter.push('/demo/1-2')">demo 1-2</button>
-    <div id="container">
-    </div>
-    <script src="rb.js"></script>
-    <script>
-    // function will be called when "/demo/:num" appear in URL or `num` changes, with `num` being param.
-    PRouter.route('/demo/:num', function(num){
-        document.getElementById('container').innerHTML = 'This is demo ' + num;
-    });
+	<ul class="nav">
+		<li id="tab1" class="tab">PRouter.js</li>
+		<li id="tab2" class="tab">Download</li>
+		<a id="aboutMe" href="http://www.imsun.net" target="_blank">关于作者</a>
+	</ul>
+	<a href="https://github.com/imsun/PRouter.js"><img style="z-index: 50;position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+	<div id="container" class="container">
+		<ul id="catalog">
+			<li class="catalog-header">目录</li>
+			<li><a>PRouter.js</a></li>
+			<li><a>使用方法</a></li>
+			<li>
+				<a>方法列表</a>
+				<ul>
+					<li> |-- <a>PRouter.start()</a></li>
+					<li> |-- <a>PRouter.route()</a></li>
+					<li> |-- <a>PRouter.queryRoute()</a></li>
+					<li> |-- <a>PRouter.bindForTag()</a></li>
+					<li> |-- <a>PRouter.push()</a></li>
+					<li> `-- <a>PRouter.replace()</a></li>
+				</ul>
+			</li>
+		</ul>
+		<div id="page1" class="page">
+			<div class="content">
+				<div class="left-col">
+				</div>
+				<div class="right-col">
+					<h1 id="title1">PRouter.js</h1>
+					<p>PRouter = pushState + router</p>
+					<p>PRouter 主要用于解析和无刷新地改变 URL。</p>
+					<p>PRouter 支持对 path 和 query 的两种路由。</p>
+					<p>PRouter 采用了 HTML5 history API（pushState），在载入、前进、后退、刷新等各种情况下都能够对 URL 进行解析，向用户展示正确页面。</p>
 
-    // start PRouter.
-    PRouter.start();
-    </script>
+					<h3 id="title2">使用方法</h3>
+					<p>下面的代码演示了如何添加和使用路由</p>
+					<a id="demo1" class="demo-link">点击查看 Demo</a>
+					
+					<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;button id="button1" onclick="PRouter.push('/demo/1-1')"&gt;demo 1-1&lt;/button&gt;
+	&lt;button id="button2" onclick="PRouter.push('/demo/1-2')"&gt;demo 1-2&lt;/button&gt;
+	&lt;div id="container"&gt;
+	&lt;/div&gt;
+	&lt;script src="prouter.js"&gt;&lt;/script&gt;
+	&lt;script&gt;
+	// 当 "/demo/:num" 出现在 URL 中或 `num` 的值改变时回调函数就会被执行, 同时 `num` 将作为函数参数.
+	PRouter.route('/demo/:num', function(num){
+		document.getElementById('container').innerHTML = 'This is demo ' + num;
+	});
+
+	// 启动 PRouter.
+	PRouter.start();
+	&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+					</code></pre>
+
+					<p>下面的代码演示了如何更简单地使用路由</p>
+					<a id="demo2" class="demo-link">点击查看 Demo</a>
+
+					<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;a href="/demo/2-1" href-opt="push"&gt;demo 2-1&lt;/a&gt;
+	&lt;a href="/demo/2-2" href-opt="push"&gt;demo 2-2&lt;/a&gt;
+	&lt;div id="container"&gt;
+	&lt;/div&gt;
+	&lt;script src="prouter.js"&gt;&lt;/script&gt;
+	&lt;script&gt;
+	// 当 "/demo/:num" 出现在 URL 中或 `num` 的值改变时回调函数就会被执行, 同时 `num` 将作为函数参数.
+	PRouter.route('/demo/:num', function(num){
+		document.getElementById('container').innerHTML = 'This is demo ' + num;
+	});
+
+	// 向所有有 `href-opt` 属性的 `a` 元素绑定点击事件.
+	PRouter.bindForTag();
+
+	// 启动 PRouter.
+	PRouter.start();
+	&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+					</code></pre>
+					<p>这种使用方法对浏览器和搜索引擎都更加友好。`PRouter.bindForTag()` 方法会劫持所有“href-opt”属性为“push”或“replace”的 `a` 元素的点击事件，点击时会按照“href”的值来无刷新改变当前 URL。</p>
+					<h3 id="title3">方法列表</h3>
+					<pre>
+						<code>
+PRouter.start();                                // 启动 PRouter
+PRouter.route(route, callback, event);          // 添加路由
+PRouter.queryRoute(key, callback, event);       // 为 URL query 中的 key 添加路由
+PRouter.bindForTag(tagName);                    // 为当前页面中的元素绑定点击事件
+PRouter.push(url);                              // 调用 history.pushState 函数改变 URL
+PRouter.replace(url);                           // 调用 history.replaceState 函数改变 URL
+						</code>
+					</pre>
+<h4 id="title4">PRouter.start()</h4>
+<p>It will start the router by add a listener to <code>popState</code>. Be sure it is put after <code>PRouter.route()</code> or <code>PRouter.queryRoute</code>.</p>
+<h4 id="title5">PRouter.route(route, callback, event)</h4>
+<ul>
+<li>
+<p><strong>route</strong> <em>[String]</em>: a route such like '/demo' or '/demo/:num' or '/demo/p:num'.</p>
+</li>
+<li>
+<p><strong>callback</strong> <em>[Function]</em>: It will be called when current URL match the route.</p>
+</li>
+<li>
+<p><strong>event</strong> <em>[String, optional]</em>: Determin when the callback will be called. Default 'change'(when route matched first time or param in route changes), 'show'(everytime when route matched) is also avalible.</p>
+</li>
+</ul>
+<h4 id="title5">PRouter.queryRoute(key, callback, event)</h4>
+<ul>
+<li>
+<p><strong>key</strong> <em>[String]</em>: a key that may appears in URL query.</p>
+</li>
+<li>
+<p><strong>callback</strong> <em>[Function]</em>: It will be called when the key appears in current URL or or value for it changes.</p>
+</li>
+<li>
+<p><strong>event</strong> <em>[String, optional]</em>: Determin when the callback will be called. Default 'change'(when the key appears first time or value for it changes), 'show'(everytime when key is in URL) is also avalible.</p>
+</li>
+</ul>
+<h4 id="title6">PRouter.bindForTag(tagName)</h4>
+<ul>
+<li><strong>tagName</strong> <em>[String, optional]</em>: Tag name for target elements. Default "a".</li>
+</ul>
+<p>For a simpler usage of PRouter, you can run this function after elements being loaded. It will add a click-event listener to elements whose tag name is <code>tagName</code> and has <code>href-opt</code>(can be "push" or "replace"), such as <code>&lt;a href="/demo" href-opt="push"&gt;demo&lt;/a&gt;</code>.</p>
+<h4 id="title7">PRouter.push(url, checkURL)</h4>
+<ul>
+<li>
+<p><strong>url</strong> <em>[String]</em>: Target URL.</p>
+</li>
+<li>
+<p><strong>checkURL</strong> <em>[Boolean]</em>: Optional. Determin whether check URL after changing it. Default true.</p>
+</li>
+</ul>
+<h4 id="title8">PRouter.replace(url, checkURL)</h4>
+<ul>
+<li>
+<p><strong>url</strong> <em>[String]</em>: Target URL.</p>
+</li>
+<li>
+<p><strong>checkURL</strong> <em>[Boolean]</em>: Optional. Determin whether check URL after changing it. Default true.</p>
+</li>
+				</div><!--right-col-->
+			</div><!--content-->
+		</div><!--page1-->
+
+		<div id="page2" class="page">
+			<div class="content">
+				<h1>Download</h1>
+				<p>点击此处下载 <a href="https://github.com/imsun/PRouter.js/archive/master.zip" target="_blank">PRouter.js</a></p>
+				<p>或者 <a href="https://github.com/imsun/PRouter_test.js" target="_blank">Fork me on GitHub</a></p>
+			</div>
+		</div>
+	</div><!--container-->
+
+<script src="prouter.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/highlight.pack.js"></script>
+<script src="js/main.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
