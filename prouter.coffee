@@ -3,6 +3,7 @@
 	PRouter = root.PRouter = {}
 	rules = PRouter.rules = {}
 	queryRules = PRouter.queryRules = {}
+	_hasPushState = !!(this.history and this.history.pushState)
 
 	PRouter.lastPath = 
 		key: ''
@@ -61,8 +62,10 @@
 			back: location.href
 		checkURL = checkURL or true
 
-		root.history.pushState(config, document.title, url)
-		PRouter._checkURL() if checkURL
+		if _hasPushState
+			root.history.pushState(config, document.title, url)
+			PRouter._checkURL() if checkURL
+		else location.href = url
 
 	# Use `pushState` to change current URL.
 	# @param  {String} url    Target URL.
@@ -72,8 +75,10 @@
 			back: location.href
 		checkURL = checkURL or true
 
-		root.history.replaceState(config, document.title, url)
-		PRouter._checkURL() if checkURL
+		if _hasPushState
+			root.history.replaceState(config, document.title, url)
+			PRouter._checkURL() if checkURL
+		else location.href = url
 
 	# Check current URL and route.
 	# @param  {String} url Optional. Default location.pathname.
@@ -116,14 +121,14 @@
 		splatParam = /\*\w+/g
 		escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g
 		pattern = route.replace(escapeRegExp, '\\$&')
-			.replace(optionalParam, '(?:$1)?')
-			.replace(namedParam, (match, optional) ->
-				return match if optional 
-				return '([^\/]+)'
-			)
-			.replace(splatParam, '(.*?)');
-
-		return '^' + pattern + '$';
+						.replace(optionalParam, '(?:$1)?')
+						.replace(namedParam, (match, optional) ->
+							if optional
+								return match
+							else return '([^/?]+)'
+						)
+						.replace(splatParam, '([^?]*?)')
+		'^' + pattern + '(?:\\?([\\s\\S]*))?$'
 
 	# Check if the event happened.
 	# @param  {String} event
