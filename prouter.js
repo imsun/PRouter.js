@@ -20,7 +20,18 @@
     return PRouter._checkURL();
   };
   PRouter.route = function(route, callback, event) {
-    var pattern;
+    var pattern, _route;
+    if (typeof route === 'object') {
+      return (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = route.length; _i < _len; _i++) {
+          _route = route[_i];
+          _results.push(PRouter.route(_route, callback, event));
+        }
+        return _results;
+      })();
+    }
     pattern = this._getPattern(route);
     if (!rules[pattern]) {
       rules[pattern] = [];
@@ -31,6 +42,18 @@
     });
   };
   PRouter.queryRoute = function(key, callback, event) {
+    var _key;
+    if (typeof key === 'object') {
+      return (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = key.length; _i < _len; _i++) {
+          _key = key[_i];
+          _results.push(PRouter.queryRoute(_key, callback, event));
+        }
+        return _results;
+      })();
+    }
     if (!queryRules[key]) {
       queryRules[key] = [];
     }

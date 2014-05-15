@@ -25,6 +25,9 @@
 	# @param  {Function} callback Called when event happens.
 	# @param  {String}   event    Optional. The trigger event. Default 'change'.
 	PRouter.route = (route, callback, event) ->
+		if typeof route is 'object'
+			return (PRouter.route _route, callback, event for _route in route)
+		
 		pattern = this._getPattern(route)
 
 		rules[pattern] = [] if not rules[pattern]
@@ -37,6 +40,9 @@
 	# @param  {Function} callback Called when event happens.
 	# @param  {String}   event    Optional. The trigger event. Default 'change'.
 	PRouter.queryRoute = (key, callback, event) ->
+		if typeof key is 'object'
+			return (PRouter.queryRoute _key, callback, event for _key in key)
+		
 		queryRules[key] = [] if not queryRules[key]
 		queryRules[key].push
 			fn: callback
